@@ -33,9 +33,7 @@ public class Main {
     private static void loadDataUsingVirtualThreadsLoop() {
         executeWithLogsAndMetrics("loadDataUsingVirtualThreadsLoop", (callableCommands) -> {
             try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                executor.invokeAll(callableCommands.toList());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                callableCommands.forEach(executor::submit);
             }
             return null;
         });
@@ -44,9 +42,7 @@ public class Main {
     private static void loadDataUsingOsThreadsLoop() {
         executeWithLogsAndMetrics("loadDataUsingOsThreadsLoop", (callableCommands) -> {
             try (ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
-                executor.invokeAll(callableCommands.toList());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                callableCommands.forEach(executor::submit);
             }
             return null;
         });
@@ -98,6 +94,7 @@ public class Main {
             threadName.ifPresent(name -> System.out.println("Thread [" + name + "] runs [" + i + "]"));
 
 //            sleep();
+            // blocking call, until data is available
             return URI.create("https://run.mocky.io/v3/8b916b06-1f82-446c-9391-263f37058ffe?random=" + i).toURL().getContent();
         };
     }
