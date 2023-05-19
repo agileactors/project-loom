@@ -11,17 +11,17 @@ import java.util.stream.Stream;
 
 /**
  * Mimics a service that integrates with a third party api and loads data <numberOfCallableCommands> times.
- * Use JDK 21 EA (SDKMAN: sdk use java 21.ea.21-open)
+ * Use JDK 21 EA (SDKMAN: sdk use java 21.ea.21-open) --enable-review
  */
 public class Main {
 
     // Number of Callable commands
-    private static final int numberOfCallableCommands = 10;
+    private static final int numberOfCallableCommands = 1000;
 
     public static void main(String[] args) {
         printAvailableProcessors();
         loadDataUsingNormalLoop();
-        loadDataUsingOsThreadsLoop();
+        loadDataUsingPlatformThreadsLoop();
         loadIngDataUsingParallelStream();
         loadDataUsingVirtualThreadsLoop();
     }
@@ -39,8 +39,8 @@ public class Main {
         });
     }
 
-    private static void loadDataUsingOsThreadsLoop() {
-        executeWithLogsAndMetrics("loadDataUsingOsThreadsLoop", (callableCommands) -> {
+    private static void loadDataUsingPlatformThreadsLoop() {
+        executeWithLogsAndMetrics("loadDataUsingPlatformThreadsLoop", (callableCommands) -> {
             try (ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
                 callableCommands.forEach(executor::submit);
             }
